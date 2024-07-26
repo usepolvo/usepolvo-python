@@ -8,6 +8,7 @@ from ..rate_limit import rate_limited_call
 from ..schemas.stripe_schemas import CreateCustomer, Customer
 from ..utils.transformations import transform_customer_data, transform_response_data
 from .config import get_settings
+from .exceptions import StripeError
 
 # Set up cache: max size 100, TTL 10 minutes
 cache = TTLCache(maxsize=100, ttl=600)
@@ -27,17 +28,22 @@ class StripeCustomerClient:
             previous_page = (page - 1) * size
             params["starting_after"] = await self._get_nth_customer_id(previous_page)
 
-        # Call the synchronous method using asyncio.to_thread
-        response = await asyncio.to_thread(stripe.Customer.list, **params)
-        customers = response.data
+        try:
+            response = await asyncio.to_thread(stripe.Customer.list, **params)
+            customers = response.data
+        except Exception as e:
+            StripeError.handle(e)
 
         transformed_customers = [transform_response_data(c) for c in customers]
         return [Customer(**tc) for tc in transformed_customers]
 
     async def _get_nth_customer_id(self, n):
-        customers = await stripe.Customer.list(limit=n + 1).data
-        if len(customers) > n:
-            return customers[n]["id"]
+        try:
+            customers = await asyncio.to_thread(stripe.Customer.list, limit=n + 1)
+            if len(customers.data) > n:
+                return customers.data[n]["id"]
+        except Exception as e:
+            StripeError.handle(e)
         return None
 
     @rate_limited_call
@@ -49,16 +55,20 @@ class StripeCustomerClient:
 
         transformed_data = transform_customer_data(customer_data.dict())
 
-        # Call the synchronous method using asyncio.to_thread
-        customer = await asyncio.to_thread(stripe.Customer.create, **transformed_data)
+        try:
+            customer = await asyncio.to_thread(stripe.Customer.create, **transformed_data)
+        except Exception as e:
+            StripeError.handle(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
     @rate_limited_call
     async def retrieve_customer(self, customer_id) -> Customer:
-        # Call the synchronous method using asyncio.to_thread
-        customer = await asyncio.to_thread(stripe.Customer.retrieve, customer_id)
+        try:
+            customer = await asyncio.to_thread(stripe.Customer.retrieve, customer_id)
+        except Exception as e:
+            StripeError.handle(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
@@ -72,16 +82,20 @@ class StripeCustomerClient:
 
         transformed_data = transform_customer_data(customer_data.dict())
 
-        # Call the synchronous method using asyncio.to_thread
-        customer = await asyncio.to_thread(stripe.Customer.modify, customer_id, **transformed_data)
+        try:
+            customer = await asyncio.to_thread(stripe.Customer.modify, customer_id, **transformed_data)
+        except Exception as e:
+            StripeError.handle(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
     @rate_limited_call
     async def delete_customer(self, customer_id) -> Customer:
-        # Call the synchronous method using asyncio.to_thread
-        customer = await asyncio.to_thread(stripe.Customer.delete, customer_id)
+        try:
+            customer = await asyncio.to_thread(stripe.Customer.delete, customer_id)
+        except Exception as e:
+            StripeError.handle(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
