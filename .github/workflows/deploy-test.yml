@@ -51,7 +51,7 @@ jobs:
           git commit --allow-empty -m "chore: version update"
           git push
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_TOKEN: ${{ secrets.GH_PAT_TOKEN }}
 
       - name: Build package and publish
         working-directory: src
