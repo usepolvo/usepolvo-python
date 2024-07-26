@@ -31,7 +31,7 @@ ENCRYPTION_KEY=your_generated_encryption_key
 
 ```python
 import asyncio
-from my_python_package.stripe.customers import StripeCustomerClient
+from usepolvo.stripe.customers import StripeCustomerClient
 
 async def list_customers():
     client = StripeCustomerClient()
@@ -46,7 +46,7 @@ asyncio.run(list_customers())
 
 ```python
 import asyncio
-from my_python_package.stripe.customers import StripeCustomerClient
+from usepolvo.stripe.customers import StripeCustomerClient
 
 async def create_customer():
     client = StripeCustomerClient()
@@ -62,7 +62,7 @@ If you prefer to use the package synchronously, you can create a synchronous wra
 
 ```python
 import asyncio
-from my_python_package.stripe.customers import StripeCustomerClient
+from usepolvo.stripe.customers import StripeCustomerClient
 
 def list_customers_sync():
     client = StripeCustomerClient()
