@@ -1,15 +1,13 @@
-from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+from pydantic import BaseModel, EmailStr, field_validator, model_validator
 
 
 class Customer(BaseModel):
-    id: Optional[str]
-    email: EmailStr
-    name: Optional[str]
-    phone: Optional[str]
-    created_at: Optional[datetime] = Field(default_factory=datetime.now)
+    id: Optional[str] = None
+    email: Optional[EmailStr] = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
 
     @field_validator("phone")
     def validate_phone(cls, value):
@@ -23,3 +21,7 @@ class Customer(BaseModel):
         if not name and not email:
             raise ValueError("Either name or email must be provided")
         return values
+
+
+class CreateCustomer(Customer):
+    email: EmailStr
