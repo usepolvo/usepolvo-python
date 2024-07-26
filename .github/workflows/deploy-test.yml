@@ -45,12 +45,11 @@ jobs:
         run: |
           bump2version patch --verbose
 
-      - name: Commit and push changes
+      - name: Add and push changes
         env:
           GIT_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git add .
-          git commit --allow-empty -m "chore: version update"
           git push
 
       - name: Build package and publish
