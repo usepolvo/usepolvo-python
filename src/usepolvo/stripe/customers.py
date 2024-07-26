@@ -17,7 +17,7 @@ cache = TTLCache(maxsize=100, ttl=600)
 class StripeCustomerClient:
     def __init__(self):
         settings = get_settings()
-        stripe.api_key = settings.api_key
+        stripe.api_key = settings.stripe_api_key
         self.stripe = stripe
 
     @rate_limited_call
