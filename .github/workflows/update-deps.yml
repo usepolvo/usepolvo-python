@@ -1,8 +1,6 @@
 name: 🛠️ Update Dependencies
 
 on:
-  schedule:
-    - cron: '0 0 * * 0' # Runs every Sunday at midnight
   workflow_dispatch:
 
 jobs:
@@ -20,7 +18,13 @@ jobs:
         run: pip install pip-tools
 
       - name: Compile new requirements
-        run: pip-compile --upgrade
+        run: |
+          set -e
+          for req_file in requirements-*.txt; do
+            if [ -f "$req_file" ]; then
+              pip-compile --upgrade "$req_file" -o "$req_file"
+            fi
+          done
 
       - name: Check for changes
         id: git_diff
