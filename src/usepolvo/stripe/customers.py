@@ -4,10 +4,10 @@ import stripe
 from cachetools import TTLCache, cached
 from pydantic import ValidationError
 
-from ..config import get_settings
 from ..rate_limit import rate_limited_call
 from ..schemas.stripe_schemas import CreateCustomer, Customer
 from ..utils.transformations import transform_customer_data, transform_response_data
+from .config import get_settings
 
 # Set up cache: max size 100, TTL 10 minutes
 cache = TTLCache(maxsize=100, ttl=600)

@@ -13,4 +13,3 @@ def get_settings():
 
 class Settings(BaseSettings, env_file=".env"):
     stripe_api_key: str
-    encryption_key: str
