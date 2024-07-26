@@ -36,14 +36,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-build.txt
 
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
       - name: Bump up package version
         run: |
           bump2version patch --verbose
 
       - name: Commit and push changes
         run: |
-          git config --local user.name 'github-actions[bot]'
-          git config --local user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           git commit --allow-empty -m "chore: version update"
           git push
