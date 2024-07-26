@@ -16,7 +16,7 @@ on:
       - "pyproject.toml"
 
 concurrency:
-  group: staging-${{ github.event.pull_request.number || github.ref }}
+  group: staging-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
