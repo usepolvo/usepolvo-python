@@ -46,11 +46,11 @@ jobs:
           bump2version patch --verbose
 
       - name: Add and push changes
-        env:
-          GIT_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git add .
           git push
+        env:
+          GIT_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Build package and publish
         working-directory: src
