@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.ref }}
 
@@ -46,10 +46,12 @@ jobs:
           bump2version patch --verbose
 
       - name: Commit and push changes
+        env:
+          GIT_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git add .
           git commit --allow-empty -m "chore: version update"
-          git push https://github-actions:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+          git push https://github-actions:${GIT_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
 
       - name: Build package and publish
         working-directory: src
