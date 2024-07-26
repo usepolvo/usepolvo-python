@@ -17,7 +17,7 @@ class Customer(BaseModel):
             raise ValueError("Phone number must contain only digits")
         return value
 
-    @model_validator
+    @model_validator(mode="wrap")
     def check_name_or_email(cls, values):
         name, email = values.get("name"), values.get("email")
         if not name and not email:
