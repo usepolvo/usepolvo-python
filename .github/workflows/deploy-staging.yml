@@ -37,8 +37,9 @@ jobs:
           pip install -r requirements-build.txt
 
       - name: Bump up package version
+        working-directory: src
         run: |
-          bump2version patch --no-tag --no-commit
+          bump2version patch
 
       - name: Commit and push changes
         run: |
