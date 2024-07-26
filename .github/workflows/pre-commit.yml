@@ -1,4 +1,4 @@
-name: Pre-commit hook
+name: 🪝 Pre-commit hook
 
 on:
   pull_request:
