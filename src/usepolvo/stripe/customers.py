@@ -2,7 +2,7 @@ import stripe
 from cachetools import TTLCache, cached
 from pydantic import ValidationError
 
-from ..config import settings
+from ..config import get_settings
 from ..rate_limit import rate_limited_call
 from ..schemas.stripe_schemas import Customer
 from ..utils.encryption import EncryptionManager
@@ -14,6 +14,7 @@ cache = TTLCache(maxsize=100, ttl=600)
 
 class StripeCustomerClient:
     def __init__(self):
+        settings = get_settings()
         encryption_key = settings.encryption_key.encode()
         self.encryption_manager = EncryptionManager(encryption_key)
         self.api_key = self.encryption_manager.decrypt(settings.stripe_api_key)

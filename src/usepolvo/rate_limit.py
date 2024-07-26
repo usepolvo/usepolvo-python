@@ -1,5 +1,3 @@
-import time
-
 from ratelimit import limits, sleep_and_retry
 from retry import retry
 

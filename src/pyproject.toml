@@ -19,6 +19,7 @@ dependencies = [
     "uvicorn",
     "requests",
     "pydantic",
+    "pydantic-settings",
     "python-dotenv",
     "cryptography",
     "loguru",

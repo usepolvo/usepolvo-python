@@ -1,17 +1,16 @@
-import os
+from functools import lru_cache
 
 from dotenv import load_dotenv
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 load_dotenv()
 
 
-class Settings(BaseSettings):
+@lru_cache
+def get_settings():
+    return Settings()
+
+
+class Settings(BaseSettings, env_file=".env"):
     stripe_api_key: str
     encryption_key: str
-
-    class Config:
-        env_file = ".env"
-
-
-settings = Settings()
