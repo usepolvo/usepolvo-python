@@ -1,0 +1,11 @@
+stripe
+fastapi
+uvicorn
+requests
+pydantic
+python-dotenv
+cryptography
+loguru
+ratelimit
+asyncio
+cachetools

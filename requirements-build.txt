@@ -1,0 +1,5 @@
+setuptools>=42
+wheel
+build
+twine
+bump2version

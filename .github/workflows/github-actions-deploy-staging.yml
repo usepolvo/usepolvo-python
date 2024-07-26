@@ -1,0 +1,29 @@
+name: 🔬 Deploy staging version [auto]
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - "README*.md"
+      - ".gitignore"
+      - ".github/**"
+      - ".vscode/**"
+      - "Makefile"
+      - "examples/**"
+      - ".bumpversion.cfg"
+      - "pyproject.toml"
+
+concurrency:
+  group: staging-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish-package:
+    permissions:
+      contents: write
+    uses: usepolvo/workflows/.github/workflows/publish-python-package.yml@main
+    with:
+      version_update: patch
+    secrets: inherit
