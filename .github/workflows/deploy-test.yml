@@ -51,14 +51,14 @@ jobs:
         run: |
           git add .
           git commit --allow-empty -m "chore: version update"
-          git push https://github-actions:${GIT_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+          git push
 
       - name: Build package and publish
         working-directory: src
         run: |
           python -m build
           python -m twine upload \
-          --repository usepolvo \
+          --repository testpypi \
           --username '__token__' \
           --password '${{ secrets.TEST_PYPI_TOKEN }}' \
           dist/* \
