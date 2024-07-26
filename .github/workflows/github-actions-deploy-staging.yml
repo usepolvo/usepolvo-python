@@ -23,7 +23,7 @@ jobs:
   build-and-publish-package:
     permissions:
       contents: write
-    uses: usepolvo/workflows/.github/workflows/publish-python-package.yml@main
+    uses: usepolvo/workflows/.github/workflows/publish-python-package.yml@develop
     with:
       version_update: patch
     secrets: inherit
