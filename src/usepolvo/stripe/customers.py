@@ -53,10 +53,13 @@ class StripeCustomerClient:
         except ValidationError as e:
             raise ValueError(f"Invalid customer data: {e}")
 
-        transformed_data = transform_customer_data(customer_data.dict())
+        transformed_data = transform_customer_data(customer_data.model_dump())
 
         try:
-            customer = await asyncio.to_thread(stripe.Customer.create, **transformed_data)
+            customer = await asyncio.to_thread(
+                stripe.Customer.create,
+                **transformed_data,
+            )
         except Exception as e:
             StripeError.handle(e)
 
@@ -80,10 +83,14 @@ class StripeCustomerClient:
         except ValidationError as e:
             raise ValueError(f"Invalid customer data: {e}")
 
-        transformed_data = transform_customer_data(customer_data.dict())
+        transformed_data = transform_customer_data(customer_data.model_dump())
 
         try:
-            customer = await asyncio.to_thread(stripe.Customer.modify, customer_id, **transformed_data)
+            customer = await asyncio.to_thread(
+                stripe.Customer.modify,
+                customer_id,
+                **transformed_data,
+            )
         except Exception as e:
             StripeError.handle(e)
 
