@@ -1,10 +1,12 @@
+import asyncio
+
 import stripe
 from cachetools import TTLCache, cached
 from pydantic import ValidationError
 
 from ..config import get_settings
 from ..rate_limit import rate_limited_call
-from ..schemas.stripe_schemas import Customer
+from ..schemas.stripe_schemas import CreateCustomer, Customer
 from ..utils.encryption import EncryptionManager
 from ..utils.transformations import transform_customer_data, transform_response_data
 
@@ -28,7 +30,11 @@ class StripeCustomerClient:
         if page > 1:
             previous_page = (page - 1) * size
             params["starting_after"] = await self._get_nth_customer_id(previous_page)
-        customers = await stripe.Customer.list(**params).data
+
+        # Call the synchronous method using asyncio.to_thread
+        response = await asyncio.to_thread(stripe.Customer.list, **params)
+        customers = response.data
+
         transformed_customers = [transform_response_data(c) for c in customers]
         return [Customer(**tc) for tc in transformed_customers]
 
@@ -41,17 +47,23 @@ class StripeCustomerClient:
     @rate_limited_call
     async def create_customer(self, **kwargs) -> Customer:
         try:
-            customer_data = Customer(**kwargs)
+            customer_data = CreateCustomer(**kwargs)
         except ValidationError as e:
             raise ValueError(f"Invalid customer data: {e}")
+
         transformed_data = transform_customer_data(customer_data.dict())
-        customer = await stripe.Customer.create(**transformed_data)
+
+        # Call the synchronous method using asyncio.to_thread
+        customer = await asyncio.to_thread(stripe.Customer.create, **transformed_data)
+
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
     @rate_limited_call
     async def retrieve_customer(self, customer_id) -> Customer:
-        customer = await stripe.Customer.retrieve(customer_id)
+        # Call the synchronous method using asyncio.to_thread
+        customer = await asyncio.to_thread(stripe.Customer.retrieve, customer_id)
+
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
@@ -61,13 +73,19 @@ class StripeCustomerClient:
             customer_data = Customer(id=customer_id, **kwargs)
         except ValidationError as e:
             raise ValueError(f"Invalid customer data: {e}")
+
         transformed_data = transform_customer_data(customer_data.dict())
-        customer = await stripe.Customer.modify(customer_id, **transformed_data)
+
+        # Call the synchronous method using asyncio.to_thread
+        customer = await asyncio.to_thread(stripe.Customer.modify, customer_id, **transformed_data)
+
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
     @rate_limited_call
     async def delete_customer(self, customer_id) -> Customer:
-        customer = await stripe.Customer.delete(customer_id)
+        # Call the synchronous method using asyncio.to_thread
+        customer = await asyncio.to_thread(stripe.Customer.delete, customer_id)
+
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
