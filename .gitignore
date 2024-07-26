@@ -5,3 +5,4 @@ usepolvo.egg-info/
 .env
 Pipfile*
 *.log
+__pycache__/
