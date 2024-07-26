@@ -5,7 +5,6 @@ requests
 pydantic
 pydantic-settings
 python-dotenv
-cryptography
 loguru
 ratelimit
 asyncio
