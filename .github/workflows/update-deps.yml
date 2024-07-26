@@ -43,7 +43,7 @@ jobs:
       - name: Commit and push if dependencies updated
         if: steps.git_diff.outputs.changes == 'true'
         run: |
-          git add requirements.txt
+          git add requirements-*.txt
           git commit -m "chore: update dependencies to latest versions"
           git push
         env:
