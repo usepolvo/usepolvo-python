@@ -1,4 +1,4 @@
-name: 🔬 Deploy staging version [auto]
+name: 🔬 Deploy test version [auto]
 
 on:
   workflow_dispatch:
@@ -50,6 +50,8 @@ jobs:
           git add .
           git commit --allow-empty -m "chore: version update"
           git push
+        env:
+          GIT_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - name: Build package and publish
         working-directory: src
