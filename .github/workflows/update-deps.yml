@@ -22,7 +22,9 @@ jobs:
           set -e
           for req_file in requirements-*.txt; do
             if [ -f "$req_file" ]; then
-              pip-compile --upgrade "$req_file" -o "$req_file"
+              temp_file=$(mktemp)
+              pip-compile --upgrade "$req_file" -o "$temp_file"
+              mv "$temp_file" "$req_file"
             fi
           done
 
