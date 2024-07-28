@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "usepolvo"
-version = "0.1.14"
+version = "0.1.13"
 description = "A comprehensive integration package supporting various services."
 authors = [
     { name="Caio Pizzol", email="caio@usepolvo.com" }
@@ -24,7 +24,8 @@ dependencies = [
     "loguru",
     "ratelimit",
     "asyncio",
-    "cachetools"
+    "cachetools",
+    "retry"
 ]
 
 [tool.pytest.ini_options]
