@@ -13,3 +13,5 @@ def get_settings():
 
 class Settings(BaseSettings, env_file=".env"):
     stripe_api_key: str
+    stripe_calls: int = 100  # Default value
+    stripe_period: int = 1  # Default value (in seconds)
