@@ -5,14 +5,14 @@ from ..utils.transformations import transform_customer_data, transform_response_
 from . import StripeClient
 
 
-class StripeCustomerClient(StripeClient):
-    def __init__(self):
-        super().__init__()
+class StripeCustomerClient:
+    def __init__(self, client: StripeClient):
+        self.client = client
 
     async def list_customers(self, page=1, size=10):
         cache_key = f"list_customers_{page}_{size}"
-        if cache_key in self.cache:
-            return self.cache[cache_key]
+        if cache_key in self.client.cache:
+            return self.client.cache[cache_key]
 
         params = {"limit": size, "starting_after": None}
         if page > 1:
@@ -20,29 +20,29 @@ class StripeCustomerClient(StripeClient):
             params["starting_after"] = await self._get_nth_customer_id(previous_page)
 
         try:
-            response = await self.rate_limited_execute(self.stripe.Customer.list, **params)
+            response = await self.client.rate_limited_execute(self.client.stripe.Customer.list, **params)
             customers = response.data
         except Exception as e:
-            self.handle_error(e)
+            self.client.handle_error(e)
 
         transformed_customers = [transform_response_data(c) for c in customers]
         result = [Customer(**tc) for tc in transformed_customers]
-        self.cache[cache_key] = result
+        self.client.cache[cache_key] = result
         return result
 
     async def _get_nth_customer_id(self, n):
         cache_key = f"nth_customer_id_{n}"
-        if cache_key in self.cache:
-            return self.cache[cache_key]
+        if cache_key in self.client.cache:
+            return self.client.cache[cache_key]
 
         try:
-            customers = await self.rate_limited_execute(self.stripe.Customer.list, limit=n + 1)
+            customers = await self.client.rate_limited_execute(self.client.stripe.Customer.list, limit=n + 1)
             if len(customers.data) > n:
                 result = customers.data[n]["id"]
-                self.cache[cache_key] = result
+                self.client.cache[cache_key] = result
                 return result
         except Exception as e:
-            self.handle_error(e)
+            self.client.handle_error(e)
         return None
 
     async def create_customer(self, **kwargs) -> Customer:
@@ -54,29 +54,29 @@ class StripeCustomerClient(StripeClient):
         transformed_data = transform_customer_data(customer_data.model_dump())
 
         try:
-            customer = await self.rate_limited_execute(
-                self.stripe.Customer.create,
+            customer = await self.client.rate_limited_execute(
+                self.client.stripe.Customer.create,
                 **transformed_data,
             )
         except Exception as e:
-            self.handle_error(e)
+            self.client.handle_error(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
     async def retrieve_customer(self, customer_id) -> Customer:
         cache_key = f"retrieve_customer_{customer_id}"
-        if cache_key in self.cache:
-            return self.cache[cache_key]
+        if cache_key in self.client.cache:
+            return self.client.cache[cache_key]
 
         try:
-            customer = await self.rate_limited_execute(self.stripe.Customer.retrieve, customer_id)
+            customer = await self.client.rate_limited_execute(self.client.stripe.Customer.retrieve, customer_id)
         except Exception as e:
-            self.handle_error(e)
+            self.client.handle_error(e)
 
         transformed_customer = transform_response_data(customer)
         result = Customer(**transformed_customer)
-        self.cache[cache_key] = result
+        self.client.cache[cache_key] = result
         return result
 
     async def update_customer(self, customer_id, **kwargs) -> Customer:
@@ -88,22 +88,22 @@ class StripeCustomerClient(StripeClient):
         transformed_data = transform_customer_data(customer_data.model_dump())
 
         try:
-            customer = await self.rate_limited_execute(
-                self.stripe.Customer.modify,
+            customer = await self.client.rate_limited_execute(
+                self.client.stripe.Customer.modify,
                 customer_id,
                 **transformed_data,
             )
         except Exception as e:
-            self.handle_error(e)
+            self.client.handle_error(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
 
     async def delete_customer(self, customer_id) -> Customer:
         try:
-            customer = await self.rate_limited_execute(self.stripe.Customer.delete, customer_id)
+            customer = await self.client.rate_limited_execute(self.client.stripe.Customer.delete, customer_id)
         except Exception as e:
-            self.handle_error(e)
+            self.client.handle_error(e)
 
         transformed_customer = transform_response_data(customer)
         return Customer(**transformed_customer)
