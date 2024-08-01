@@ -7,7 +7,8 @@ help:
 	@echo "⚈ run			---> 🎮 Run project locally (default)."
 	@echo "⚈ debug			---> 🕵️  Debug project locally."
 	@echo "⚈ freeze		---> 🧊 Freeze requirements."
-	@echo "⚈ sort			---> ⬇️  Sort requirements and env files alphabetically".
+	@echo "⚈ sort			---> ⬇️  Sort requirements and env files alphabetically."
+	@echo "⚈ publish		---> 🚀 Build and publish a new package version."
 
 run:
 	@echo "\n> 🎮 Running the project locally... (default)\n"
@@ -45,3 +46,16 @@ sort:
 			echo "$$file not found, skipping..."; \
 		fi \
 	done
+
+publish:
+	@echo "\n> 🚀 Building and publishing a new package version...\n"
+	@echo "\n> 📦 Installing build dependencies...\n"
+	pip install -r requirements-build.txt
+	@echo "\n> 🗑️ Erasing previous build...\n"
+	rm -rf src/dist
+	@echo "\n> ⬆️ Bumping package version...\n"
+	bump2version patch --verbose
+	@echo "\n> 🔨 Building package...\n"
+	python -m build src
+	@echo "\n> 🌐 Uploading package to Test PyPi...\n"
+	python -m twine upload --repository usepolvo-cli src/dist/*
