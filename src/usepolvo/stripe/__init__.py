@@ -3,8 +3,9 @@ from functools import wraps
 
 import stripe
 
-from .. import BaseClient
-from ..rate_limit import rate_limited_call
+from usepolvo import BaseClient
+from usepolvo.rate_limit import rate_limited_call
+
 from .config import get_settings
 
 

@@ -1,8 +1,8 @@
 from pydantic import ValidationError
 
-from ..schemas.stripe_schemas import CreateCustomer, Customer
-from ..utils.transformations import transform_customer_data, transform_response_data
-from . import StripeClient
+from usepolvo.schemas.stripe_schemas import CreateCustomer, Customer
+from usepolvo.stripe import StripeClient
+from usepolvo.utils.transformations import transform_customer_data, transform_response_data
 
 
 class StripeCustomerClient:

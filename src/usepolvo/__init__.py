@@ -1,6 +1,6 @@
 from cachetools import TTLCache
 
-from .config import get_settings
+from usepolvo.config import get_settings
 
 
 class BaseClient:
