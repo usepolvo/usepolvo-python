@@ -6,3 +6,4 @@ usepolvo.egg-info/
 Pipfile*
 *.log
 __pycache__/
+.pytest_cache/
