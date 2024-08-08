@@ -7,3 +7,4 @@ Pipfile*
 *.log
 __pycache__/
 .pytest_cache/
+dev/

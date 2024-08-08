@@ -1,9 +1,40 @@
-
 # usepolvo-python
 
 Version: 0.1.20
 
 Unlock the power of seamless integrations with our all-in-one integration package. Enjoy advanced features including asynchronous support, intelligent rate limiting, efficient caching, robust logging, secure storage, and so much more.
+
+## Project Structure
+
+Our project follows an octopus-themed structure to keep things organized and fun:
+
+```
+usepolvo-python/
+├── src/
+│   └── usepolvo/
+│       ├── tentacles/  # API integrations
+│       │   ├── stripe/
+│       │   │   ├── customers.py
+│       │   │   └── ...
+│       │   └── ...
+│       ├── arms/       # Shared functionality
+│       ├── ink/        # Utilities
+│       ├── beak/       # Core functionality
+│       └── mantle/     # Advanced features
+├── tests/
+├── examples/
+└── [configuration files]
+```
+
+### Key Directories
+
+- **tentacles/**: Each subdirectory represents an API integration (e.g., `stripe/`).
+- **arms/**: Shared functionality used across different API integrations.
+- **ink/**: Utility functions and helpers.
+- **beak/**: Core functionality of the library.
+- **mantle/**: Advanced features like logging and complex configurations.
+- **tests/**: All test files, mirroring the structure of the `src/` directory.
+- **examples/**: Example scripts demonstrating how to use the library.
 
 ## Installation
 
@@ -31,7 +62,7 @@ ENCRYPTION_KEY=your_generated_encryption_key
 
 ```python
 import asyncio
-from usepolvo.stripe.customers import StripeCustomerClient
+from usepolvo.tentacles.stripe.customers import StripeCustomerClient
 
 async def list_customers():
     client = StripeCustomerClient()
@@ -46,7 +77,7 @@ asyncio.run(list_customers())
 
 ```python
 import asyncio
-from usepolvo.stripe.customers import StripeCustomerClient
+from usepolvo.tentacles.stripe.customers import StripeCustomerClient
 
 async def create_customer():
     client = StripeCustomerClient()
@@ -62,7 +93,7 @@ If you prefer to use the package synchronously, you can create a synchronous wra
 
 ```python
 import asyncio
-from usepolvo.stripe.customers import StripeCustomerClient
+from usepolvo.tentacles.stripe.customers import StripeCustomerClient
 
 def list_customers_sync():
     client = StripeCustomerClient()

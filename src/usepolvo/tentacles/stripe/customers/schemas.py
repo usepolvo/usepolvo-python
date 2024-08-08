@@ -1,3 +1,5 @@
+# usepolvo/tentacles/stripe/customers/schemas.py
+
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr, field_validator, model_validator
