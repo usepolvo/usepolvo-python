@@ -1,2 +1,2 @@
-from .client import CertnClient
-from .webhook import CertnWebhook
+from usepolvo.tentacles.certn.client import CertnClient
+from usepolvo.tentacles.certn.webhooks.handler import CertnWebhook

@@ -1,12 +1,11 @@
-from usepolvo.tentacles.certn import CertnClient, CertnWebhook
 import asyncio
 
-client = CertnClient()
-webhook = CertnWebhook()
+from src.usepolvo.tentacles.certn import CertnClient
+from src.usepolvo.tentacles.certn.webhooks import CertnWebhook
 
 
-async def list_applications():
-    applications = await client.applications.list()
+def list_applications(client):
+    applications = client.applications.list()
     if applications.count == 0:
         print("No applications found.")
     for application in applications.results:
@@ -14,32 +13,18 @@ async def list_applications():
     return applications
 
 
-@webhook.register("application.created")
-async def handle_application_created(payload):
-    application_id = payload["data"]["id"]
-    print(f"New application created with ID: {application_id}")
-    application = await client.applications.get(application_id)
-    print(f"Application status: {application.status}")
-
-
-@webhook.register("application.updated")
-async def handle_application_updated(payload):
-    application_id = payload["data"]["id"]
-    print(f"Application updated with ID: {application_id}")
-    application = await client.applications.get(application_id)
-    print(f"Updated application status: {application.status}")
-
-
 async def main():
-    # Start the webhook server
-    await webhook.start_server("/webhook/certn", port=8080)
+    client = CertnClient()
+    webhook = CertnWebhook()
+
+    # Set the webhook secret key (if required)
+    webhook.set_secret_key("your_certn_webhook_secret")
 
     # List applications
-    await list_applications()
+    list_applications(client)
 
-    # Keep the server running
-    while True:
-        await asyncio.sleep(1)
+    # Start the webhook server and keep it running
+    await webhook.run("/certn", port=8080)
 
 
 if __name__ == "__main__":
