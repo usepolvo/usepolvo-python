@@ -12,15 +12,22 @@ Our project follows an octopus-themed structure to keep things organized and fun
 usepolvo-python/
 ├── src/
 │   └── usepolvo/
-│       ├── tentacles/  # API integrations
+│       ├── tentacles/          # Integrations
 │       │   ├── stripe/
-│       │   │   ├── customers.py
-│       │   │   └── ...
+│       │   │   ├── customers   # Resources
+│       │   │   │   └── ...
+│       │   │   ├── client.py   # API client
+│       │   │   └── webhook.py  # Webhook handler
+│       │   ├── certn/
+│       │   │   ├── applications
+│       │   │   │   └── ...
+│       │   │   ├── client.py
+│       │   │   └── webhook.py
 │       │   └── ...
-│       ├── arms/       # Shared functionality
-│       ├── ink/        # Utilities
-│       ├── beak/       # Core functionality
-│       └── mantle/     # Advanced features
+│       ├── arms/               # Shared functionality
+│       ├── ink/                # Utilities
+│       ├── beak/               # Core functionality
+│       └── mantle/             # Advanced features
 ├── tests/
 ├── examples/
 └── [configuration files]
