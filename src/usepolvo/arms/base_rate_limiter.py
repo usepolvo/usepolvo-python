@@ -3,8 +3,9 @@
 import time
 from abc import ABC, abstractmethod
 from collections import deque
+from functools import wraps
 from threading import Lock
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 
 class BaseRateLimiter(ABC):
@@ -73,3 +74,14 @@ class BaseRateLimiter(ABC):
         :return: A dictionary containing the rate limits
         """
         pass
+
+    @classmethod
+    def rate_limited(cls, func: Callable):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if not hasattr(self, "rate_limiter") or not isinstance(self.rate_limiter, BaseRateLimiter):
+                raise AttributeError("The class must have a 'rate_limiter' attribute of type BaseRateLimiter")
+            self.rate_limiter.wait_if_needed()
+            return func(self, *args, **kwargs)
+
+        return wrapper

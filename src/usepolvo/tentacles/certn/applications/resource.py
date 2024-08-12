@@ -18,7 +18,7 @@ class CertnApplicationResource(BaseResource):
         params = self.client.get_pagination_params(page, size)
 
         try:
-            response = self._make_request("GET", self.base_path, params=params)
+            response = self.client._request("GET", self.base_path, params=params)
             result = ApplicationListResponse(**response)
             self.client.cache[cache_key] = result
             return result
@@ -27,7 +27,7 @@ class CertnApplicationResource(BaseResource):
 
     def get(self, resource_id: str) -> ApplicationResponse:
         try:
-            response = self._make_request("GET", f"{self.base_path}{resource_id}/")
+            response = self.client._request("GET", f"{self.base_path}{resource_id}/")
             return ApplicationResponse(**response)
         except ResourceNotFoundError:
             raise ResourceNotFoundError(f"Application with ID {resource_id} not found")
@@ -35,7 +35,7 @@ class CertnApplicationResource(BaseResource):
     def create(self, data: Dict[str, Any]) -> ApplicationResponse:
         try:
             prepared_data = self._prepare_request_data(data)
-            response = self._make_request("POST", self.base_path, json=prepared_data)
+            response = self.client._request("POST", self.base_path, json=prepared_data)
             return ApplicationResponse(**response)
         except ValidationError as e:
             raise ValidationError(f"Invalid data for creating application: {str(e)}")
@@ -43,7 +43,7 @@ class CertnApplicationResource(BaseResource):
     def update(self, resource_id: str, data: Dict[str, Any]) -> ApplicationResponse:
         try:
             prepared_data = self._prepare_request_data(data)
-            response = self._make_request("PUT", f"{self.base_path}{resource_id}/", json=prepared_data)
+            response = self.client._request("PUT", f"{self.base_path}{resource_id}/", json=prepared_data)
             return ApplicationResponse(**response)
         except ResourceNotFoundError:
             raise ResourceNotFoundError(f"Application with ID {resource_id} not found")
@@ -52,12 +52,6 @@ class CertnApplicationResource(BaseResource):
 
     def delete(self, resource_id: str) -> None:
         try:
-            self._make_request("DELETE", f"{self.base_path}{resource_id}/")
+            self.client._request("DELETE", f"{self.base_path}{resource_id}/")
         except ResourceNotFoundError:
             raise ResourceNotFoundError(f"Application with ID {resource_id} not found")
-
-    def _make_request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
-        try:
-            return self.client.rate_limited_execute(self.client._request, method, endpoint, **kwargs)
-        except Exception as e:
-            self.client.handle_error(e)
