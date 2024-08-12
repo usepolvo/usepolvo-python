@@ -1,5 +1,6 @@
-from usepolvo.tentacles.stripe import StripeClient, StripeWebhook
 import asyncio
+
+from usepolvo.tentacles.stripe import StripeClient, StripeWebhook
 
 client = StripeClient()
 webhook = StripeWebhook()
