@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import requests
 
@@ -11,11 +11,11 @@ from usepolvo.tentacles.certn.rate_limiter import CertnRateLimiter
 
 
 class CertnClient(BaseClient):
-    def __init__(self, api_key: str | None = None):
+    def __init__(self, api_key: Optional[str] = None):
         super().__init__()
-        certn_settings = get_settings()
-        self.api_key = api_key if api_key else certn_settings.certn_api_key
-        self.base_url = certn_settings.certn_base_url
+        self.settings = get_settings()
+        self.api_key = api_key if api_key else self.settings.certn_api_key
+        self.base_url = self.settings.certn_base_url
         self.rate_limiter = CertnRateLimiter()
         self._applications = None
 

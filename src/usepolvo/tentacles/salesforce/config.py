@@ -8,9 +8,9 @@ from pydantic_settings import BaseSettings
 
 
 class SalesforceSettings(BaseSettings):
-    salesforce_consumer_key: str
-    salesforce_consumer_secret: str
-    salesforce_redirect_uri: str = "http://localhost:8000/callback"
+    salesforce_consumer_key: Optional[str] = None
+    salesforce_consumer_secret: Optional[str] = None
+    salesforce_redirect_uri: Optional[str] = "http://localhost:8000/callback"
     salesforce_environment: str = "production"  # Can be 'production' or 'sandbox'
     salesforce_custom_domain: Optional[str] = None
     salesforce_api_version: str = "v61.0"  # TODO: make this configurable

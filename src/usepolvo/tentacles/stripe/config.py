@@ -1,6 +1,7 @@
 # usepolvo/tentacles/stripe/config.py
 
 from functools import lru_cache
+from typing import Optional
 
 from pydantic_settings import BaseSettings
 
@@ -11,4 +12,4 @@ def get_settings():
 
 
 class Settings(BaseSettings, env_file=".env", extra="ignore"):
-    stripe_api_key: str
+    stripe_api_key: Optional[str] = None

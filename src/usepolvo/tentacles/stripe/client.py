@@ -1,17 +1,16 @@
 from functools import wraps
-from typing import Any
+from typing import Optional
 
 import stripe
 
 from usepolvo.arms.base_client import BaseClient
-from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
 from usepolvo.tentacles.stripe.config import get_settings
 from usepolvo.tentacles.stripe.customers.resource import StripeCustomerResource
 from usepolvo.tentacles.stripe.rate_limiter import StripeRateLimiter
 
 
 class StripeClient(BaseClient):
-    def __init__(self, api_key: str | None = None):
+    def __init__(self, api_key: Optional[str] = None):
         super().__init__()
         settings = get_settings()
         stripe.api_key = api_key if api_key else settings.stripe_api_key

@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from urllib.parse import parse_qs, urlparse
 
 import requests
@@ -15,9 +15,17 @@ from usepolvo.tentacles.salesforce.rate_limiter import SalesforceRateLimiter
 
 
 class SalesforceClient(BaseClient):
-    def __init__(self):
+    def __init__(
+        self,
+        consumer_key: Optional[str] | None = None,
+        consumer_secret: Optional[str] | None = None,
+        redirect_uri: Optional[str] | None = None,
+    ):
         super().__init__()
         self.settings = get_settings()
+        self.consumer_key = consumer_key if consumer_key else self.settings.salesforce_consumer_key
+        self.consumer_key = consumer_secret if consumer_secret else self.settings.salesforce_consumer_secret
+        self.redirect_uri = redirect_uri if redirect_uri else self.settings.salesforce_redirect_uri
         self.instance_url = self.settings.salesforce_instance_url
         self.api_base_url = self.settings.salesforce_api_base_url
         self.rate_limiter = SalesforceRateLimiter()
@@ -59,7 +67,7 @@ class SalesforceClient(BaseClient):
                 self.get_oauth_token()
 
     def get_oauth_token(self):
-        auth_url = f"{self.instance_url}/services/oauth2/authorize?response_type=token&client_id={self.settings.salesforce_consumer_key}&redirect_uri={self.settings.salesforce_redirect_uri}"
+        auth_url = f"{self.instance_url}/services/oauth2/authorize?response_type=token&client_id={self.consumer_key}&redirect_uri={self.redirect_uri}"
         print(f"Please visit this URL to authenticate: {auth_url}")
         print("After authentication, you will be redirected to a URL. Please copy and paste that entire URL here:")
         redirect_url = input().strip()
@@ -86,8 +94,8 @@ class SalesforceClient(BaseClient):
             f"{self.instance_url}/services/oauth2/token",
             data={
                 "grant_type": "refresh_token",
-                "client_id": self.settings.salesforce_consumer_key,
-                "client_secret": self.settings.salesforce_consumer_secret,
+                "client_id": self.consumer_key,
+                "client_secret": self.consumer_secret,
                 "refresh_token": self.refresh_token,
             },
         )
