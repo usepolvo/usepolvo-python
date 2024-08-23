@@ -4,7 +4,7 @@ from hubspot.crm.contacts import ApiException, SimplePublicObjectInput, SimplePu
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
-from usepolvo.tentacles.hubspot.contacts.schemas import Contact, CreateContact
+from usepolvo.tentacles.hubspot.contacts.schemas import CreateContact
 
 
 class HubSpotContactResource(BaseResource):
@@ -48,8 +48,7 @@ class HubSpotContactResource(BaseResource):
 
     def update(self, resource_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
         try:
-            validated_data = Contact(**data).model_dump()
-            simple_public_object_input = SimplePublicObjectInput(properties=validated_data)
+            simple_public_object_input = SimplePublicObjectInput(properties=data)
             return self.client.rate_limited_execute(
                 self.client.client.crm.contacts.basic_api.update,
                 contact_id=resource_id,
