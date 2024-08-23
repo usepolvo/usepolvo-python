@@ -32,11 +32,13 @@ stripe = ["stripe==10.5.0"]
 openai = ["openai==1.42.0"]
 claude = ["anthropic==0.34.1"]
 gemini = ["google-generativeai==0.7.2"]
+hubspot = ["hubspot-api-client==9.0.0"]
 all = [
     "stripe==10.5.0",
     "openai==1.42.0",
     "anthropic==0.34.1",
     "google-generativeai==0.7.2",
+    "hubspot-api-client==9.0.0",
 ]
 
 [project.license]
