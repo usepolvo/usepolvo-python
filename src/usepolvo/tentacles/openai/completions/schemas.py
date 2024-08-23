@@ -1,11 +1,11 @@
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, Field
 
 
 class CompletionRequest(BaseModel):
-    model: str = Field(default="text-davinci-002")
-    prompt: str
+    model: str = Field(default="gpt-4-turbo")
+    messages: List[dict]
     max_tokens: int = Field(default=100, ge=1, le=4096)
     temperature: float = Field(default=0.7, ge=0, le=1)
     n: int = Field(default=1, ge=1)

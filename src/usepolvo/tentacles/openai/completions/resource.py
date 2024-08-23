@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-import openai
+from openai import OpenAI
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
@@ -10,9 +10,9 @@ from usepolvo.tentacles.openai.exceptions import OpenAIError
 class OpenAICompletionResource(BaseResource):
     def __init__(self, client):
         super().__init__(client)
-        self.openai = client.client
+        self.openai: OpenAI = client.client
 
-    async def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create a new completion using OpenAI.
 
@@ -21,12 +21,20 @@ class OpenAICompletionResource(BaseResource):
         :raises ValidationError: If the data is invalid
         """
         try:
-            await self.client.rate_limiter.wait_if_needed()
-            response = await self.openai.Completion.acreate(**data)
+            self.client.rate_limiter.wait_if_needed()
+            response = self.openai.chat.completions.create(**data)
             return response
-        except openai.error.InvalidRequestError as e:
-            raise ValidationError(f"Invalid data for creating completion: {str(e)}")
         except Exception as e:
             self.client.handle_error(e)
 
-    # Additional methods like list(), get(), update(), delete() can be added if applicable
+    def get(self, completion_id: str) -> Dict[str, Any]:
+        pass
+
+    def list(self, **kwargs) -> Dict[str, Any]:
+        pass
+
+    def update(self, completion_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        pass
+
+    def delete(self, completion_id: str) -> Dict[str, Any]:
+        pass

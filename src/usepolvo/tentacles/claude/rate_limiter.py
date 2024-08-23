@@ -7,9 +7,9 @@ class ClaudeRateLimiter(BaseRateLimiter):
         self.limit = limit
         self._initialize_window("requests")
 
-    async def wait_if_needed(self):
-        async with self.lock:
-            await self._wait_if_window_full("requests", self.limit, 60)  # 60 second window
+    def wait_if_needed(self):
+        with self.lock:
+            self._wait_if_window_full("requests", self.limit, 60)  # 60 second window
 
     def get_limits(self):
         return {"requests_per_minute": self.limit}

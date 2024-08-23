@@ -6,17 +6,19 @@ from usepolvo.tentacles.openai.completions.schemas import CompletionRequest
 client = OpenAIClient()
 
 
-async def create_completion():
+def create_completion():
     request = CompletionRequest(
-        prompt="Translate the following English text to Spanish: 'Hello, how are you?'", max_tokens=50
+        messages=[
+            {"role": "system", "content": "Translate the following English text to Spanish: 'Hello, how are you?'"}
+        ]
     )
-    response = await client.completions.create(request.model_dump())
-    print(f"Completion: {response['choices'][0]['text']}")
+    response = client.completions.create(request.model_dump(exclude_none=True))
+    print(f"Completion: {response.choices[0].message.content}")
 
 
 async def main():
     # Create a completion
-    await create_completion()
+    create_completion()
 
     # You could add more OpenAI-specific operations here
 

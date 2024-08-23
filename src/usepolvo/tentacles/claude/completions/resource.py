@@ -12,7 +12,7 @@ class ClaudeCompletionResource(BaseResource):
         super().__init__(client)
         self.anthropic = client.client
 
-    async def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create a new completion using Claude.
 
@@ -21,12 +21,22 @@ class ClaudeCompletionResource(BaseResource):
         :raises ValidationError: If the data is invalid
         """
         try:
-            await self.client.rate_limiter.wait_if_needed()
-            response = await self.anthropic.completions.create(**data)
+            self.client.rate_limiter.wait_if_needed()
+            response = self.anthropic.completions.create(**data)
             return response.model_dump()
         except ValueError as e:
             raise ValidationError(f"Invalid data for creating completion: {str(e)}")
         except Exception as e:
             self.client.handle_error(e)
 
-    # Additional methods like list(), get(), update(), delete() can be added if applicable
+    def get(self, completion_id: str) -> Dict[str, Any]:
+        pass
+
+    def list(self, **kwargs) -> Dict[str, Any]:
+        pass
+
+    def update(self, completion_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        pass
+
+    def delete(self, completion_id: str) -> Dict[str, Any]:
+        pass

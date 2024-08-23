@@ -6,17 +6,18 @@ from usepolvo.tentacles.claude.completions.schemas import CompletionRequest
 client = ClaudeClient()
 
 
-async def create_completion():
+def create_completion():
     request = CompletionRequest(
-        prompt="Translate the following English text to French: 'Hello, how are you?'", max_tokens_to_sample=100
+        prompt="Translate the following English text to French: 'Hello, how are you?'",
+        max_tokens_to_sample=100,
     )
-    response = await client.completions.create(request.model_dump())
+    response = client.completions.create(request.model_dump())
     print(f"Completion: {response['completion']}")
 
 
 async def main():
     # Create a completion
-    await create_completion()
+    create_completion()
 
     # You could add more Claude-specific operations here
 

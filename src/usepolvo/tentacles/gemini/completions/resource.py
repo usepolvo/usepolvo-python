@@ -12,7 +12,7 @@ class GeminiCompletionResource(BaseResource):
         super().__init__(client)
         self.genai = client.client
 
-    async def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create a new completion using Gemini.
 
@@ -21,7 +21,7 @@ class GeminiCompletionResource(BaseResource):
         :raises ValidationError: If the data is invalid
         """
         try:
-            await self.client.rate_limiter.wait_if_needed()
+            self.client.rate_limiter.wait_if_needed()
             model = self.genai.GenerativeModel(data.pop("model"))
             response = model.generate_content(data.pop("prompt"), **data)
             return response.text
@@ -30,4 +30,14 @@ class GeminiCompletionResource(BaseResource):
         except Exception as e:
             self.client.handle_error(e)
 
-    # Additional methods like list(), get(), update(), delete() can be added if applicable
+    def get(self, completion_id: str) -> Dict[str, Any]:
+        pass
+
+    def list(self, **kwargs) -> Dict[str, Any]:
+        pass
+
+    def update(self, completion_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
+        pass
+
+    def delete(self, completion_id: str) -> Dict[str, Any]:
+        pass

@@ -1,6 +1,6 @@
 from typing import Optional
 
-import openai
+from openai import OpenAI
 
 from usepolvo.arms.base_client import BaseClient
 from usepolvo.tentacles.openai.completions.resource import OpenAICompletionResource
@@ -13,10 +13,9 @@ class OpenAIClient(BaseClient):
         super().__init__()
         settings = get_settings()
         self.api_key = api_key if api_key else settings.openai_api_key
-        openai.api_key = self.api_key
-        self.client = openai
+        self.client: OpenAI = OpenAI(api_key=self.api_key)
         self.rate_limiter = OpenAIRateLimiter()
-        self._completions = None
+        self._completions: Optional[OpenAICompletionResource] = None
 
     @property
     def completions(self):
