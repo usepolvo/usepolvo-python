@@ -33,7 +33,7 @@ class SalesforceClient(BaseClient):
         self.access_token = None
         self.refresh_token = None
         self.token_expiry = 0
-        self.token_file = "salesforce_token.json"
+        self.token_file = "~/.salesforce_token.json"
         self.load_tokens()
 
     @property
