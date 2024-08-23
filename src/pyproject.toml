@@ -20,13 +20,24 @@ dependencies = [
     "python-dotenv==1.0.1",
     "ratelimit==2.2.1",
     "requests==2.32.3",
-    "stripe==10.5.0",
     "tenacity==9.0.0",
     "uvicorn==0.30.3",
 ]
 [[project.authors]]
 name = "Caio Pizzol"
 email = "caio@usepolvo.com"
+
+[project.optional-dependencies]
+stripe = ["stripe==10.5.0"]
+openai = ["openai==1.42.0"]
+claude = ["anthropic==0.34.1"]
+gemini = ["google-generativeai==0.7.2"]
+all = [
+    "stripe==10.5.0",
+    "openai==1.42.0",
+    "anthropic==0.34.1",
+    "google-generativeai==0.7.2",
+]
 
 [project.license]
 text = "MIT"
