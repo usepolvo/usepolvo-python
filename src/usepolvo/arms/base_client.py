@@ -13,22 +13,3 @@ class BaseClient:
     def handle_error(self, e):
         # Base error handling logic
         print(f"Error: {e}")
-
-    def get_pagination_params(
-        self, page: int = 1, size: int = 10, starting_after: str = None, ending_before: str = None
-    ) -> dict:
-        if self.pagination_method == PaginationMethod.OFFSET_LIMIT:
-            return {"offset": (page - 1) * size, "limit": size}
-        elif self.pagination_method == PaginationMethod.PAGE_SIZE:
-            return {"page": page, "size": size}
-        elif self.pagination_method == PaginationMethod.PAGE:
-            return {"page": page}
-        elif self.pagination_method == PaginationMethod.CURSOR:
-            params = {"limit": size}
-            if starting_after:
-                params["starting_after"] = starting_after
-            if ending_before:
-                params["ending_before"] = ending_before
-            return params
-        else:
-            raise ValueError(f"Unsupported pagination method: {self.pagination_method}")

@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from hubspot.crm.contacts import ApiException
+from hubspot.crm.contacts import ApiException, SimplePublicObjectInput, SimplePublicObjectInputForCreate
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
@@ -10,24 +10,23 @@ from usepolvo.tentacles.hubspot.contacts.schemas import Contact, CreateContact
 class HubSpotContactResource(BaseResource):
     def __init__(self, client):
         super().__init__(client)
-        self.hubspot = client.client
 
-    def list(
-        self, page: int = 1, size: int = 10, after: str = None, before: str = None, **kwargs
-    ) -> List[Dict[str, Any]]:
+    def list(self, limit: int = 10, after: str = None, **kwargs) -> List[Dict[str, Any]]:
         try:
-            params = self.client.get_pagination_params(page, size, after, before)
+            params = self.client.get_pagination_params(limit=limit, after=after)
             params.update(kwargs)
             return self.client.rate_limited_execute(
-                self.hubspot.crm.contacts.basic_api.get_page, is_write_operation=False, **params
-            )
+                self.client.client.crm.contacts.basic_api.get_page, **params
+            ).results
         except ApiException as e:
             self.client.handle_error(e)
 
     def get(self, resource_id: str) -> Dict[str, Any]:
         try:
             return self.client.rate_limited_execute(
-                self.hubspot.crm.contacts.basic_api.get_by_id, is_write_operation=False, contact_id=resource_id
+                self.client.client.crm.contacts.basic_api.get_by_id,
+                contact_id=resource_id,
+                properties=["firstname", "lastname", "email"],
             )
         except ApiException as e:
             if e.status == 404:
@@ -37,8 +36,10 @@ class HubSpotContactResource(BaseResource):
     def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         try:
             validated_data = CreateContact(**data).model_dump()
+            simple_public_object_input = SimplePublicObjectInputForCreate(properties=validated_data)
             return self.client.rate_limited_execute(
-                self.hubspot.crm.contacts.basic_api.create, is_write_operation=True, properties=validated_data
+                self.client.client.crm.contacts.basic_api.create,
+                simple_public_object_input_for_create=simple_public_object_input,
             )
         except ApiException as e:
             if e.status == 400:
@@ -48,11 +49,11 @@ class HubSpotContactResource(BaseResource):
     def update(self, resource_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
         try:
             validated_data = Contact(**data).model_dump()
+            simple_public_object_input = SimplePublicObjectInput(properties=validated_data)
             return self.client.rate_limited_execute(
-                self.hubspot.crm.contacts.basic_api.update,
-                is_write_operation=True,
+                self.client.client.crm.contacts.basic_api.update,
                 contact_id=resource_id,
-                properties=validated_data,
+                simple_public_object_input=simple_public_object_input,
             )
         except ApiException as e:
             if e.status == 404:
@@ -63,9 +64,7 @@ class HubSpotContactResource(BaseResource):
 
     def delete(self, resource_id: str) -> None:
         try:
-            self.client.rate_limited_execute(
-                self.hubspot.crm.contacts.basic_api.archive, is_write_operation=True, contact_id=resource_id
-            )
+            self.client.rate_limited_execute(self.client.client.crm.contacts.basic_api.archive, contact_id=resource_id)
         except ApiException as e:
             if e.status == 404:
                 raise ResourceNotFoundError(f"Contact with ID {resource_id} not found")

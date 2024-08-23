@@ -2,7 +2,7 @@
 
 from typing import Any, Dict
 
-from hubspot.crm.tasks import ApiException
+from hubspot.crm.objects import ApiException, SimplePublicObjectInputForCreate
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
@@ -14,15 +14,29 @@ class HubSpotTaskResource(BaseResource):
         super().__init__(client)
         self.hubspot = client.client
 
-    def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def create(self, data: CreateTask) -> Dict[str, Any]:
         try:
-            validated_data = CreateTask(**data).model_dump()
-            return self.client.rate_limited_execute(
-                self.hubspot.crm.tasks.basic_api.create,
-                is_write_operation=True,
-                simple_public_object_input=validated_data,
+            create_task = CreateTask(**data).model_dump()
+            validated_data = SimplePublicObjectInputForCreate(**create_task)
+            res = self.client.rate_limited_execute(
+                lambda: self.hubspot.crm.objects.basic_api.create(
+                    object_type="tasks", simple_public_object_input_for_create=validated_data
+                )
             )
+            return res
         except ApiException as e:
             if e.status == 400:
                 raise ValidationError(f"Invalid data for creating task: {str(e)}")
             self.client.handle_error(e)
+
+    def get(self):
+        pass
+
+    def list(self):
+        pass
+
+    def update(self):
+        pass
+
+    def delete(self):
+        pass

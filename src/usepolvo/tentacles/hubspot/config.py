@@ -9,5 +9,12 @@ def get_settings():
     return Settings()
 
 
-class Settings(BaseSettings, env_file=".env", extra="ignore"):
+class Settings(BaseSettings):
     hubspot_api_key: Optional[str] = None
+    hubspot_client_id: Optional[str] = None
+    hubspot_client_secret: Optional[str] = None
+    hubspot_redirect_uri: Optional[str] = None
+
+    class Config:
+        env_file = ".env"
+        extra = "ignore"

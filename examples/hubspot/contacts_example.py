@@ -7,11 +7,11 @@ from usepolvo.tentacles.hubspot import HubSpotClient
 
 def list_contacts(client):
     contacts = client.contacts.list(limit=10)
-    for contact in contacts.results:
+    for contact in contacts:
         print(
             f"Contact ID: {contact.id}, Name: {contact.properties.get('firstname', '')} {contact.properties.get('lastname', '')}"
         )
-    return contacts.results
+    return contacts
 
 
 def get_contact(client, contact_id):
