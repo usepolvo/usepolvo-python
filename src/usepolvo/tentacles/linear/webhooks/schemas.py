@@ -299,7 +299,7 @@ class LinearWebhookPayload(BaseModel):
 
     def get_event_type(self) -> str:
         """Returns event type in format 'type.action' (e.g., 'issue.update')"""
-        return f"{self.type.lower()}.{self.action}"
+        return f"{self.type.lower()}.{self.action.value}"
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "LinearWebhookPayload":
