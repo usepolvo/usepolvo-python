@@ -1,6 +1,6 @@
 # usepolvo-python
 
-Version: 0.1.35
+Version: 0.1.36
 
 Unlock the power of seamless integrations with our all-in-one integration package. Enjoy advanced features including asynchronous support, intelligent rate limiting, efficient caching, robust logging, secure storage, and so much more.
 
