@@ -56,7 +56,7 @@ class LinearIssueResource(BaseResource):
             response = self.client._request(
                 "PUT", f"{self.resource_type}/{resource_id}", json={"input": self._prepare_request_data(data)}
             )
-            return Issue(**response[f"update{self.resource_type.title()}"])
+            return Issue(**response[f"{self.resource_type}Update"][self.resource_type])
         except Exception as e:
             self.client.handle_error(e)
 
