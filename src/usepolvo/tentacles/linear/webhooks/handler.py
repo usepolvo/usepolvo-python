@@ -1,38 +1,38 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from usepolvo.arms.base_webhook import BaseWebhook
+from usepolvo.tentacles.linear.config import get_settings
 from usepolvo.tentacles.linear.webhooks.schemas import LinearWebhookPayload
 
 
 class LinearWebhook(BaseWebhook):
-    def __init__(self):
+    def __init__(self, webhook_secret: Optional[str] = None):
         super().__init__()
-        # ref: https://docs.certn.co/api/v/certn-api-v-1.0/guides/use-the-api/webhooks#signature-verification
         self.signature_header = "Linear-Signature"
 
-        # Register handlers
-        self.register("request_enhanced_identity_verification", self.handle_enhanced_identity_verification)
-        # Add more handlers for other event types as needed
+        # Initialize settings
+        self.settings = get_settings()
+
+        # Set webhook secret from argument or fall back to settings
+        secret = webhook_secret if webhook_secret else self.settings.linear_webhook_secret
+        if secret:
+            self.set_secret_key(secret)
 
     def get_event_type(self, payload: Dict[str, Any]) -> str:
-        return LinearWebhookPayload.from_dict(payload).get_event_type()
+        return LinearWebhookPayload(**payload).get_event_type()
 
-    async def process(self, payload: Dict[str, Any], signature: str = None) -> Any:
-        if self.secret_key and signature:
-            self.verify_signature(payload, signature)
-
-        validated_payload = LinearWebhookPayload.from_dict(payload)
+    async def process(self, payload: Dict[str, Any]) -> Any:
+        try:
+            validated_payload = LinearWebhookPayload(**payload)
+        except Exception as e:
+            print(f"Invalid payload: {e}")
+            raise
         event_type = validated_payload.get_event_type()
         handler = self.handlers.get(event_type, self.default_handler)
         return await handler(validated_payload)
 
     async def default_handler(self, payload: LinearWebhookPayload):
-        print(f"Unhandled event: {payload.get_event_type()}")
-        print(f"Payload: {payload.model_dump()}")
-
-    async def handle_enhanced_identity_verification(self, payload: LinearWebhookPayload):
-        print(f"Enhanced identity verification requested")
-        print(f"Created: {payload.created}, Submitted: {payload.submitted_time}")
-        # Add more processing as needed
-
-    # Add more specific handlers for other event types as needed
+        """Default handler for unhandled webhook events"""
+        event_type = payload.get_event_type()
+        print(f"Unhandled event: {event_type}")
+        return {"status": "ok"}

@@ -12,13 +12,15 @@ class LinearClient(BaseGraphQLClient):
     def __init__(self, api_key: Optional[str] = None):
         self.settings = get_settings()
         self.api_key = api_key if api_key else self.settings.linear_api_key
-        self.base_url = "https://api.linear.app/graphql"
+        self.base_url = self.settings.linear_base_url
         self.rate_limiter = LinearRateLimiter()
         self._issues = None
         super().__init__()
 
     def get_auth_headers(self) -> Dict[str, str]:
         """Provide Linear-specific authentication headers."""
+        if self.api_key:
+            return {"Authorization": f"{self.api_key}"}
         return {"Authorization": f"Bearer {self.api_key}"}
 
     @property

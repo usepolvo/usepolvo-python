@@ -13,7 +13,6 @@ class BaseGraphQLClient(BaseClient, ABC):
     def __init__(self):
         super().__init__()
         self._client = None
-        self.base_url = None  # Should be set by child class
         self._setup_graphql_client()
 
     @abstractmethod
@@ -67,27 +66,26 @@ class BaseGraphQLClient(BaseClient, ABC):
         parts = endpoint.strip("/").split("/")
         resource_type = parts[0]
         resource_id = parts[1] if len(parts) > 1 else None
+        request_payload = kwargs.get("json", {})
+        request_params = kwargs.get("params", {})
 
         if method == "GET":
             if resource_id:
-                return self._build_get_query(resource_type, resource_id), {"id": resource_id}
-            return self._build_list_query(resource_type, kwargs.get("params", {})), kwargs.get("params", {})
+                return self._build_get_query(resource_type), {"id": resource_id}
+            return self._build_list_query(resource_type, request_params), request_params
         elif method == "POST":
-            return self._build_create_mutation(resource_type), kwargs.get("json", {})
+            return self._build_create_mutation(resource_type), request_payload
         elif method == "PUT":
-            return self._build_update_mutation(resource_type, resource_id), {
-                "id": resource_id,
-                **kwargs.get("json", {}),
-            }
+            return self._build_update_mutation(resource_type), {"id": resource_id, **request_payload}
         elif method == "DELETE":
             return self._build_delete_mutation(resource_type, resource_id), {"id": resource_id}
 
         raise ValueError(f"Unsupported method: {method}")
 
-    def _build_get_query(self, resource_type: str, resource_id: str) -> str:
+    def _build_get_query(self, resource_type: str) -> str:
         """Build a GraphQL query for fetching a single resource."""
         return f"""
-            query Get{resource_type.title()}($id: ID!) {{
+            query Get{resource_type.title()}($id: String!) {{
                 {resource_type}(id: $id) {{
                     id
                     {self._get_resource_fields(resource_type)}
@@ -123,13 +121,13 @@ class BaseGraphQLClient(BaseClient, ABC):
             }}
         """
 
-    def _build_update_mutation(self, resource_type: str, resource_id: str) -> str:
+    def _build_update_mutation(self, resource_type: str) -> str:
         """Build a GraphQL mutation for updating a resource."""
+        resource_title = resource_type.title()
         return f"""
-            mutation Update{resource_type.title()}($id: ID!, $input: Update{resource_type.title()}Input!) {{
-                update{resource_type.title()}(id: $id, input: $input) {{
-                    id
-                    {self._get_resource_fields(resource_type)}
+            mutation {resource_title}Update($id: String!, $input: {resource_title}UpdateInput!) {{
+                {resource_type}Update(id: $id, input: $input) {{
+                    issue {{ id }}
                 }}
             }}
         """

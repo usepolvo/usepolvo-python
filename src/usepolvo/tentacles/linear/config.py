@@ -16,3 +16,4 @@ class LinearSettings(BaseSettings, env_file=".env", extra="ignore"):
     linear_client_id: Optional[str] = None
     linear_client_secret: Optional[str] = None
     linear_base_url: str = "https://api.linear.app/graphql"
+    linear_webhook_secret: Optional[str] = None
