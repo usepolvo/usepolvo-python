@@ -1,0 +1,41 @@
+name:  Deploy prod version
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: prod-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+
+      - name: Install build-dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-build.txt
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Build package and publish
+        working-directory: src
+        run: |
+          python -m build
+          python -m twine upload \
+          --repository pypi \
+          --username '__token__' \
+          --password '${{ secrets.PYPI_TOKEN }}' \
+          dist/* \
+          --verbose
