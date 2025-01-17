@@ -1,4 +1,4 @@
-name:  Deploy prod version
+name: 🚀 Deploy prod version
 
 on:
   workflow_dispatch:
