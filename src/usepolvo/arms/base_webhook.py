@@ -1,5 +1,7 @@
 import asyncio
+import json
 from abc import ABC, abstractmethod
+from typing import Union
 
 from aiohttp import web
 from pyngrok import ngrok
@@ -31,7 +33,24 @@ class BaseWebhook(ABC):
         handler = self.handlers.get(event_type, self.default_handler)
         return await handler(payload)
 
-    def verify_signature(self, payload, signature):
+    def verify_signature(self, payload: Union[str, bytes], signature: str):
+        """
+        Verify the webhook signature.
+
+        Args:
+            payload: Raw request body as string or bytes
+            signature: The signature from the header
+
+        Raises:
+            ValueError: If signature verification fails
+        """
+        # Clean up signature (remove quotes if present)
+        signature = signature.strip('"')
+
+        # Ensure we're working with a string
+        if isinstance(payload, bytes):
+            payload = payload.decode("utf-8")
+
         verify_hmac_signature(payload, signature, self.secret_key)
 
     @abstractmethod
@@ -45,10 +64,21 @@ class BaseWebhook(ABC):
         pass
 
     async def _handle_webhook(self, request):
-        payload = await request.json()
+        """Handle incoming webhook request."""
+        # Get raw request body
+        raw_body = await request.text()
+
+        # Get signature
         signature = request.headers.get(self.signature_header)
         try:
-            await self.process(payload, signature)
+            # Verify signature using raw body
+            self.verify_signature(raw_body, signature)
+
+            # Parse JSON after verification
+            payload = json.loads(raw_body)
+
+            # Process webhook
+            await self.process(payload)
             return web.Response(status=200, text="Webhook processed successfully")
         except ValueError as e:
             return web.Response(status=400, text=str(e))
