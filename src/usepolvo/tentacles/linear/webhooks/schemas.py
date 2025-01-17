@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Annotated, Any, Dict, List, Literal, Optional, Union
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, model_validator
 
 
 class WebhookAction(str, Enum):
@@ -285,6 +285,17 @@ class LinearWebhookPayload(BaseModel):
     organizationId: str
     webhookTimestamp: int
     webhookId: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def inherit_webhook_type(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+        """Ensures the type field is properly inherited by the data object"""
+        if isinstance(values, dict):
+            webhook_type = values.get("type")
+            if webhook_type and "data" in values and isinstance(values["data"], dict):
+                # Inherit the type from the parent webhook
+                values["data"]["type"] = webhook_type
+        return values
 
     def get_event_type(self) -> str:
         """Returns event type in format 'type.action' (e.g., 'issue.update')"""
