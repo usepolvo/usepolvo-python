@@ -1,7 +1,6 @@
 from cachetools import TTLCache
 
 from usepolvo.beak.config import get_settings
-from usepolvo.beak.enums import PaginationMethod
 
 
 class BaseClient:

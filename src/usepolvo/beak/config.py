@@ -1,6 +1,5 @@
-# usepolvo/config.py
+# usepolvo/beak/config.py
 
-from enum import Enum
 from functools import lru_cache
 
 from dotenv import load_dotenv
