@@ -15,10 +15,10 @@ class IssueAssignee(BaseModel):
 
 class Issue(BaseModel):
     id: str
-    title: str
-    description: str | None
-    state: IssueState
-    assignee: IssueAssignee | None
+    title: str | None = None
+    description: str | None = None
+    state: IssueState | None = None
+    assignee: IssueAssignee | None = None
 
 
 class IssueListResponse(BaseModel):
