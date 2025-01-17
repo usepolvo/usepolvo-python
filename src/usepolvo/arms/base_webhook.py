@@ -26,9 +26,6 @@ class BaseWebhook(ABC):
         self.handlers[event_type] = handler
 
     async def process(self, payload, signature=None):
-        if self.secret_key and signature:
-            self.verify_signature(payload, signature)
-
         event_type = self.get_event_type(payload)
         handler = self.handlers.get(event_type, self.default_handler)
         return await handler(payload)
@@ -44,9 +41,6 @@ class BaseWebhook(ABC):
         Raises:
             ValueError: If signature verification fails
         """
-        # Clean up signature (remove quotes if present)
-        signature = signature.strip('"')
-
         # Ensure we're working with a string
         if isinstance(payload, bytes):
             payload = payload.decode("utf-8")
@@ -71,8 +65,9 @@ class BaseWebhook(ABC):
         # Get signature
         signature = request.headers.get(self.signature_header)
         try:
-            # Verify signature using raw body
-            self.verify_signature(raw_body, signature)
+            if self.secret_key and signature:
+                # Verify signature using raw body
+                self.verify_signature(raw_body, signature)
 
             # Parse JSON after verification
             payload = json.loads(raw_body)
