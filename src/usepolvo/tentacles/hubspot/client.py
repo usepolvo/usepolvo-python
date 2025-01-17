@@ -11,7 +11,10 @@ from hubspot.hubspot import Client
 from usepolvo.arms.base_client import BaseClient
 from usepolvo.tentacles.hubspot.config import get_settings
 from usepolvo.tentacles.hubspot.contacts.resource import HubSpotContactResource
-from usepolvo.tentacles.hubspot.exceptions import HubSpotAuthenticationError, handle_hubspot_error
+from usepolvo.tentacles.hubspot.exceptions import (
+    HubSpotAuthenticationError,
+    handle_hubspot_error,
+)
 from usepolvo.tentacles.hubspot.notes.resource import HubSpotNoteResource
 from usepolvo.tentacles.hubspot.rate_limiter import HubSpotRateLimiter
 from usepolvo.tentacles.hubspot.tasks.resource import HubSpotTaskResource

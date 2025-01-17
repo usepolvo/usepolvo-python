@@ -1,5 +1,5 @@
-import hmac
 import hashlib
+import hmac
 
 
 def verify_hmac_signature(payload, signature, secret_key):

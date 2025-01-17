@@ -1,6 +1,10 @@
 from typing import Any, Dict, List
 
-from hubspot.crm.contacts import ApiException, SimplePublicObjectInput, SimplePublicObjectInputForCreate
+from hubspot.crm.contacts import (
+    ApiException,
+    SimplePublicObjectInput,
+    SimplePublicObjectInputForCreate,
+)
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError

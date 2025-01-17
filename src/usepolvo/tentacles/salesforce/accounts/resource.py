@@ -4,7 +4,10 @@ from typing import Any, Dict
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
-from usepolvo.tentacles.salesforce.accounts.schemas import AccountListResponse, AccountResponse
+from usepolvo.tentacles.salesforce.accounts.schemas import (
+    AccountListResponse,
+    AccountResponse,
+)
 
 
 class SalesforceAccountResource(BaseResource):

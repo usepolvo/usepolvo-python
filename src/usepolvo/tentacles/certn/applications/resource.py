@@ -2,7 +2,10 @@ from typing import Any, Dict
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
-from usepolvo.tentacles.certn.applications.schemas import ApplicationListResponse, ApplicationResponse
+from usepolvo.tentacles.certn.applications.schemas import (
+    ApplicationListResponse,
+    ApplicationResponse,
+)
 
 
 class CertnApplicationResource(BaseResource):

@@ -10,7 +10,10 @@ from usepolvo.arms.base_client import BaseClient
 from usepolvo.arms.base_rate_limiter import BaseRateLimiter
 from usepolvo.tentacles.salesforce.accounts.resource import SalesforceAccountResource
 from usepolvo.tentacles.salesforce.config import get_settings
-from usepolvo.tentacles.salesforce.exceptions import SalesforceAuthenticationError, handle_salesforce_error
+from usepolvo.tentacles.salesforce.exceptions import (
+    SalesforceAuthenticationError,
+    handle_salesforce_error,
+)
 from usepolvo.tentacles.salesforce.rate_limiter import SalesforceRateLimiter
 
 
