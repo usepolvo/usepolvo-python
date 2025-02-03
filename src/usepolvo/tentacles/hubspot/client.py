@@ -9,6 +9,7 @@ from usepolvo.tentacles.hubspot.config import get_settings
 from usepolvo.tentacles.hubspot.exceptions import handle_hubspot_error
 from usepolvo.tentacles.hubspot.rate_limiter import HubSpotRateLimiter
 from usepolvo.tentacles.hubspot.resources.contacts import ContactResource
+from usepolvo.tentacles.hubspot.resources.deals.resource import DealResource
 from usepolvo.tentacles.hubspot.resources.notes import NoteResource
 from usepolvo.tentacles.hubspot.resources.tasks import TaskResource
 
@@ -57,6 +58,7 @@ class HubSpotClient(BaseClient):
         self._contacts: Optional[ContactResource] = None
         self._tasks: Optional[TaskResource] = None
         self._notes: Optional[NoteResource] = None
+        self._deals: Optional[DealResource] = None
 
         # Handle authentication
         self._handle_authentication()
@@ -143,6 +145,13 @@ class HubSpotClient(BaseClient):
         if self._notes is None:
             self._notes = NoteResource(self)
         return self._notes
+
+    @property
+    def deals(self) -> DealResource:
+        """Access the deals resource."""
+        if self._deals is None:
+            self._deals = DealResource(self)
+        return self._deals
 
     def get_pagination_params(self, limit: int = 10, after: Optional[str] = None) -> Dict[str, Any]:
         """Get HubSpot-specific pagination parameters."""
