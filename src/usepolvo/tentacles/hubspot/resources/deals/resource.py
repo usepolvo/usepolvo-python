@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 from usepolvo.arms.base_resource import BaseResource
 from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
@@ -10,6 +10,8 @@ from usepolvo.tentacles.hubspot.resources.deals.schemas import (
 
 
 class DealResource(BaseResource):
+    DEFAULT_ASSOCIATIONS = {"companies", "contacts"}
+
     def __init__(self, client):
         super().__init__(client)
         self.base_path = "deals"
@@ -25,11 +27,23 @@ class DealResource(BaseResource):
         except Exception as e:
             self.client.handle_error(e)
 
-    def get(self, deal_id: str) -> Deal:
-        """Get a single deal by ID."""
+    def get(self, deal_id: str, associations: Optional[Set[str]] = None) -> Deal:
+        """
+        Get a single deal by ID with associations.
+
+        Args:
+            deal_id: HubSpot deal ID
+            associations: Set of association types to include. Defaults to companies and contacts
+        """
         try:
+            if associations is None:
+                associations = self.DEFAULT_ASSOCIATIONS
+
+            # Get deal with associations
             response = self.client.rate_limited_execute(
-                lambda: self.client.client.crm.deals.basic_api.get_by_id(deal_id)
+                lambda: self.client.client.crm.deals.basic_api.get_by_id(
+                    deal_id=deal_id, associations=list(associations)
+                )
             )
             return Deal(**response.to_dict())
         except ResourceNotFoundError:

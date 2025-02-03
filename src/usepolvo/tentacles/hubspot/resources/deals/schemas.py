@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -40,6 +40,7 @@ class Deal(BaseDeal):
     """Schema for deal responses from the API."""
 
     id: str
+    associations: Optional[Dict[str, Any]] = None
     properties: Dict[str, Any]
     created_at: datetime = Field(alias="createdAat")
     updated_at: datetime = Field(alias="updatedAt")
