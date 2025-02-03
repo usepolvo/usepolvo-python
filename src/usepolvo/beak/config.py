@@ -1,6 +1,7 @@
 # usepolvo/beak/config.py
 
 from functools import lru_cache
+from typing import Optional
 
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -34,3 +35,4 @@ class PolvoSettings(PolvoBaseSettings):
     CACHE_SIZE: int = 100  # Default cache size
     CACHE_TTL: int = 600  # Default cache TTL (in seconds)
     PAGINATION_METHOD: PaginationMethod = PaginationMethod.OFFSET_LIMIT  # Default pagination method
+    ENCRYPTION_KEY: Optional[str] = None  # Encryption key for sensitive data

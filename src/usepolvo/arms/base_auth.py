@@ -1,3 +1,5 @@
+# src/usepolvo/arms/base_auth.py
+
 import time
 from typing import Dict, Optional
 
@@ -8,17 +10,28 @@ from usepolvo.beak.exceptions import AuthenticationError
 
 class BaseAuth:
     """
-    Base authentication class that provides common methods for handling
-    OAuth2 token requests and managing token state.
-
-    Provider-specific flows should be implemented in the child classes.
+    Base authentication class that provides a foundation for different auth methods.
+    Specific authentication implementations (API key, OAuth2, etc) should extend this class.
     """
 
     def __init__(self):
-        # OAuth2 token state
+        # Basic auth state
         self.access_token: Optional[str] = None
         self.refresh_token: Optional[str] = None
         self.token_expiry: float = 0
+
+    def get_auth_headers(self) -> Dict[str, str]:
+        """
+        Get authentication headers for API requests.
+        Should be implemented by child classes.
+
+        Returns:
+            A dictionary with authentication headers.
+
+        Raises:
+            AuthenticationError: If authentication credentials are not available.
+        """
+        raise NotImplementedError("Subclasses must implement get_auth_headers()")
 
     def _make_token_request(self, token_url: str, token_data: Dict[str, str]) -> Dict[str, str]:
         """
@@ -44,6 +57,22 @@ class BaseAuth:
         self.token_expiry = time.time() + expires_in
         return token_response
 
+    def validate_credentials(self) -> bool:
+        """
+        Validate that required authentication credentials are available.
+        Should be implemented by child classes that need validation.
+
+        Returns:
+            bool: True if credentials are valid, False otherwise.
+        """
+        return True
+
+    def clear_credentials(self) -> None:
+        """Clear all authentication credentials."""
+        self.access_token = None
+        self.refresh_token = None
+        self.token_expiry = 0
+
     def ensure_valid_token(self, refresh_func, *args, **kwargs):
         """
         Ensures that a valid access token is available. If the token has expired,
@@ -55,17 +84,3 @@ class BaseAuth:
         """
         if not self.access_token or time.time() >= self.token_expiry:
             refresh_func(*args, **kwargs)
-
-    def get_auth_headers(self) -> Dict[str, str]:
-        """
-        Returns the authorization headers needed for API requests.
-
-        Returns:
-            A dictionary with the 'Authorization' header.
-
-        Raises:
-            AuthenticationError: If no access token is present.
-        """
-        if not self.access_token:
-            raise AuthenticationError("Not authenticated")
-        return {"Authorization": f"Bearer {self.access_token}"}
