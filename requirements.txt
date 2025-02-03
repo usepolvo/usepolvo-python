@@ -12,5 +12,6 @@ pyngrok==7.2.3
 python-dotenv==1.0.1
 ratelimit==2.2.1
 requests==2.32.3
+requests-toolbelt==1.0.0
 stripe==11.5.0
 tenacity==9.0.0
