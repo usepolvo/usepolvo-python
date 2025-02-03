@@ -1,13 +1,10 @@
 from typing import Any, Dict
 
-from anthropic import Anthropic
-
 from usepolvo.arms.base_resource import BaseResource
-from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
-from usepolvo.tentacles.claude.exceptions import ClaudeError
+from usepolvo.beak.exceptions import ValidationError
 
 
-class ClaudeCompletionResource(BaseResource):
+class CompletionResource(BaseResource):
     def __init__(self, client):
         super().__init__(client)
         self.anthropic = client.client

@@ -3,22 +3,34 @@
 from functools import lru_cache
 
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from usepolvo.beak.enums import PaginationMethod
 
 load_dotenv()
 
 
-class Settings(BaseSettings):
-    cache_size: int = 100  # Default cache size
-    cache_ttl: int = 600  # Default cache TTL (in seconds)
-    pagination_method: PaginationMethod = PaginationMethod.OFFSET_LIMIT  # Default pagination method
-
-    class Config:
-        env_prefix = "USEPOLVO_"
-
-
 @lru_cache
 def get_settings():
-    return Settings()
+    return PolvoSettings()
+
+
+class PolvoBaseSettings(BaseSettings):
+    """
+    Base settings class that reads environment variables with POLVO_ prefix.
+    Inherits from BaseSettings to provide environment variable loading functionality.
+    """
+
+    model_config = SettingsConfigDict(
+        env_prefix="POLVO_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False,
+    )
+
+
+class PolvoSettings(PolvoBaseSettings):
+    CACHE_SIZE: int = 100  # Default cache size
+    CACHE_TTL: int = 600  # Default cache TTL (in seconds)
+    PAGINATION_METHOD: PaginationMethod = PaginationMethod.OFFSET_LIMIT  # Default pagination method

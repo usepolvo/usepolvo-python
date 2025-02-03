@@ -5,7 +5,7 @@ from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
 from usepolvo.tentacles.linear.resources.issues.schemas import Issue, IssueListResponse
 
 
-class LinearIssueResource(BaseResource):
+class IssueResource(BaseResource):
     def __init__(self, client):
         super().__init__(client)
         self.resource_type = "issue"

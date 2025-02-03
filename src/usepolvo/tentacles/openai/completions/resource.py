@@ -3,11 +3,9 @@ from typing import Any, Dict
 from openai import OpenAI
 
 from usepolvo.arms.base_resource import BaseResource
-from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
-from usepolvo.tentacles.openai.exceptions import OpenAIError
 
 
-class OpenAICompletionResource(BaseResource):
+class CompletionResource(BaseResource):
     def __init__(self, client):
         super().__init__(client)
         self.openai: OpenAI = client.client

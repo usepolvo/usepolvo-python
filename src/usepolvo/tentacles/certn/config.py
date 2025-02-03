@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from usepolvo.beak.config import PolvoBaseSettings
 
 
 @lru_cache
@@ -11,6 +11,6 @@ def get_settings():
     return CertnSettings()
 
 
-class CertnSettings(BaseSettings, env_file=".env", extra="ignore"):
-    certn_api_key: Optional[str] = None
-    certn_base_url: str = "https://demo-api.certn.co"  # Default API URL
+class CertnSettings(PolvoBaseSettings):
+    CERTN_API_KEY: Optional[str] = None
+    CERTN_BASE_URL: str = "https://demo-api.certn.co"  # Default API URL

@@ -1,9 +1,9 @@
 # usepolvo/tentacles/linear/config.py
 
 from functools import lru_cache
-from typing import Optional
+from typing import List, Optional
 
-from pydantic_settings import BaseSettings
+from usepolvo.beak.config import PolvoBaseSettings
 
 
 @lru_cache
@@ -11,9 +11,13 @@ def get_settings():
     return LinearSettings()
 
 
-class LinearSettings(BaseSettings, env_file=".env", extra="ignore"):
-    linear_api_key: Optional[str] = None
-    linear_client_id: Optional[str] = None
-    linear_client_secret: Optional[str] = None
-    linear_base_url: str = "https://api.linear.app/graphql"
-    linear_webhook_secret: Optional[str] = None
+class LinearSettings(PolvoBaseSettings):
+    LINEAR_API_KEY: Optional[str] = None
+    LINEAR_CLIENT_ID: Optional[str] = None
+    LINEAR_CLIENT_SECRET: Optional[str] = None
+    LINEAR_OAUTH_URL: str = "https://linear.app/oauth/authorize"
+    LINEAR_OAUTH_TOKEN_URL: str = "https://api.linear.app/oauth/token"
+    LINEAR_OAUTH_SCOPES: List[str] = ["read", "write", "issues:create"]
+    LINEAR_REDIRECT_URI: str = "https://app.linear.app/oauth/callback"
+    LINEAR_BASE_URL: str = "https://api.linear.app/graphql"
+    LINEAR_WEBHOOK_SECRET: Optional[str] = None

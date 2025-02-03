@@ -3,11 +3,10 @@ from typing import Any, Dict
 from google.api_core import exceptions as google_exceptions
 
 from usepolvo.arms.base_resource import BaseResource
-from usepolvo.beak.exceptions import ResourceNotFoundError, ValidationError
-from usepolvo.tentacles.gemini.exceptions import GeminiError
+from usepolvo.beak.exceptions import ValidationError
 
 
-class GeminiCompletionResource(BaseResource):
+class CompletionResource(BaseResource):
     def __init__(self, client):
         super().__init__(client)
         self.genai = client.client

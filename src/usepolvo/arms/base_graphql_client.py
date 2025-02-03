@@ -15,16 +15,6 @@ class BaseGraphQLClient(BaseClient, ABC):
         self._client = None
         self._setup_graphql_client()
 
-    @abstractmethod
-    def get_auth_headers(self) -> Dict[str, str]:
-        """
-        Get authentication headers for the GraphQL client.
-        Must be implemented by child classes.
-
-        :return: Dictionary of headers
-        """
-        pass
-
     def _setup_graphql_client(self):
         """Initialize the GraphQL client with authentication headers."""
         if not self.base_url:
@@ -32,7 +22,7 @@ class BaseGraphQLClient(BaseClient, ABC):
 
         transport = RequestsHTTPTransport(
             url=self.base_url,
-            headers=self.get_auth_headers(),
+            headers=self.auth.get_auth_headers(),
             use_json=True,
         )
         self._client = Client(transport=transport, fetch_schema_from_transport=True)

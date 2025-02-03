@@ -1,20 +1,19 @@
 from functools import lru_cache
-from typing import Optional
+from typing import List, Optional
 
-from pydantic_settings import BaseSettings
+from usepolvo.beak.config import PolvoBaseSettings
 
 
 @lru_cache
 def get_settings():
-    return Settings()
+    return HubSpotSettings()
 
 
-class Settings(BaseSettings):
-    hubspot_api_key: Optional[str] = None
-    hubspot_client_id: Optional[str] = None
-    hubspot_client_secret: Optional[str] = None
-    hubspot_redirect_uri: Optional[str] = None
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
+class HubSpotSettings(PolvoBaseSettings):
+    HUBSPOT_OAUTH_URL: str = "https://app.hubspot.com/oauth/authorize"
+    HUBSPOT_OAUTH_TOKEN_URL: str = "https://api.hubapi.com/oauth/v1/token"
+    HUBSPOT_OAUTH_SCOPES: List[str] = ["crm.objects.contacts.write", "oauth", "crm.objects.contacts.read"]
+    HUBSPOT_API_KEY: Optional[str] = None
+    HUBSPOT_CLIENT_ID: Optional[str] = None
+    HUBSPOT_CLIENT_SECRET: Optional[str] = None
+    HUBSPOT_REDIRECT_URI: Optional[str] = None

@@ -1,47 +1,63 @@
 from typing import Any, Dict, Optional
 
-import requests
-
 from usepolvo.arms.base_client import BaseClient
 from usepolvo.arms.base_rate_limiter import BaseRateLimiter
-from usepolvo.tentacles.certn.applications.resource import CertnApplicationResource
+from usepolvo.tentacles.certn.auth import CertnAuth
 from usepolvo.tentacles.certn.config import get_settings
 from usepolvo.tentacles.certn.exceptions import handle_certn_error
 from usepolvo.tentacles.certn.rate_limiter import CertnRateLimiter
+from usepolvo.tentacles.certn.resources.applications import ApplicationResource
 
 
 class CertnClient(BaseClient):
+    """
+    Certn API client with API key authentication.
+
+    Example usage:
+        client = CertnClient(api_key="your-api-key")
+        applications = client.applications.list()
+    """
+
     def __init__(self, api_key: Optional[str] = None):
+        """Initialize the Certn client."""
         super().__init__()
+
+        # Initialize settings and auth
         self.settings = get_settings()
-        self.api_key = api_key if api_key else self.settings.certn_api_key
-        self.base_url = self.settings.certn_base_url
+        self.base_url = self.settings.CERTN_BASE_URL
+        self.auth = CertnAuth(api_key=api_key)
+
+        # Initialize rate limiter
         self.rate_limiter = CertnRateLimiter()
+
+        # Initialize resources
         self._applications = None
 
     @property
     def applications(self):
+        """Access the applications resource."""
         if self._applications is None:
-            self._applications = CertnApplicationResource(self)
+            self._applications = ApplicationResource(self)
         return self._applications
 
     @BaseRateLimiter.rate_limited
     def _request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
-        url = f"{self.base_url}{endpoint}"
-        headers = {"Authorization": f"Bearer {self.api_key}"}
-        kwargs["headers"] = headers
+        """
+        Make a rate-limited request to the Certn API.
 
+        Args:
+            method: HTTP method (GET, POST, etc.)
+            endpoint: API endpoint path
+            **kwargs: Additional request parameters
+
+        Returns:
+            API response data
+        """
         try:
-            response = requests.request(method, url, **kwargs)
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as e:
+            return super()._request(method=method, endpoint=endpoint, **kwargs)
+        except Exception as e:
             raise handle_certn_error(e)
 
-    def handle_error(self, e):
-        super().handle_error(e)
-        # Additional Certn-specific error handling can be added here
-
     def get_pagination_params(self, page: int, size: int) -> Dict[str, Any]:
-        # Implement Certn-specific pagination logic here
+        """Get Certn-specific pagination parameters."""
         return {"page": page, "size": size}

@@ -1,2 +1,4 @@
 from usepolvo.tentacles.certn.client import CertnClient
-from usepolvo.tentacles.certn.webhooks.handler import CertnWebhook
+from usepolvo.tentacles.certn.webhook.handler import CertnWebhook
+
+__all__ = ["CertnClient", "CertnWebhook"]

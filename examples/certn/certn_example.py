@@ -1,7 +1,7 @@
 import asyncio
 
 from usepolvo.tentacles.certn import CertnClient
-from usepolvo.tentacles.certn.webhooks import CertnWebhook
+from usepolvo.tentacles.certn.webhook import CertnWebhook
 
 
 def list_applications(client):

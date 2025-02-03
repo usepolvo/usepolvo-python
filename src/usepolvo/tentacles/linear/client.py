@@ -2,39 +2,60 @@ from typing import Any, Dict, Optional
 
 from usepolvo.arms.base_graphql_client import BaseGraphQLClient
 from usepolvo.arms.base_rate_limiter import BaseRateLimiter
+from usepolvo.tentacles.linear.auth import LinearAuth
 from usepolvo.tentacles.linear.config import get_settings
 from usepolvo.tentacles.linear.exceptions import handle_linear_error
 from usepolvo.tentacles.linear.rate_limiter import LinearRateLimiter
-from usepolvo.tentacles.linear.resources.issues.resource import LinearIssueResource
+from usepolvo.tentacles.linear.resources.issues import IssueResource
 
 
 class LinearClient(BaseGraphQLClient):
-    def __init__(self, api_key: Optional[str] = None):
+    """
+    Linear API client supporting both API key and OAuth authentication.
+
+    Example usage:
+        # Using API key
+        client = LinearClient(api_key="your-api-key")
+
+        # Using OAuth
+        client = LinearClient(
+            client_id="your-client-id",
+            client_secret="your-client-secret"
+        )
+        tokens = client.authenticate()  # Starts OAuth flow
+    """
+
+    def __init__(
+        self, api_key: Optional[str] = None, client_id: Optional[str] = None, client_secret: Optional[str] = None
+    ):
+        """Initialize the Linear client."""
         self.settings = get_settings()
-        self.api_key = api_key if api_key else self.settings.linear_api_key
-        self.base_url = self.settings.linear_base_url
+        self.base_url = self.settings.LINEAR_BASE_URL
+
+        # Initialize auth
+        self.auth = LinearAuth(api_key=api_key, client_id=client_id, client_secret=client_secret)
+
+        # Initialize rate limiter
         self.rate_limiter = LinearRateLimiter()
+
+        # Initialize resources
         self._issues = None
+
         super().__init__()
 
-    def get_auth_headers(self) -> Dict[str, str]:
-        """Provide Linear-specific authentication headers."""
-        if self.api_key:
-            return {"Authorization": f"{self.api_key}"}
-        return {"Authorization": f"Bearer {self.api_key}"}
+    def authenticate(self) -> Dict[str, str]:
+        """Start the OAuth authentication flow if using OAuth."""
+        return self.auth.start_oauth_flow()
 
     @property
-    def issues(self):
+    def issues(self) -> IssueResource:
+        """Access the issues resource."""
         if self._issues is None:
-            self._issues = LinearIssueResource(self)
+            self._issues = IssueResource(self)
         return self._issues
 
-    def handle_error(self, e):
-        """Override error handling with Linear-specific logic."""
-        raise handle_linear_error(e)
-
     def _get_resource_fields(self, resource_type: str) -> str:
-        """Override to specify Linear-specific fields for each resource type."""
+        """Get Linear-specific fields for each resource type."""
         if resource_type == "issue":
             return """
                 title
@@ -53,8 +74,11 @@ class LinearClient(BaseGraphQLClient):
     @BaseRateLimiter.rate_limited
     def _request(self, method: str, endpoint: str, **kwargs) -> Dict[str, Any]:
         """
-        Adapter method to maintain compatibility with REST-like interface.
+        Make a rate-limited request to the Linear API.
         Translates REST-style requests into GraphQL queries.
         """
-        query, variables = self._convert_rest_to_graphql(method, endpoint, **kwargs)
-        return self.execute_query(query, variables)
+        try:
+            query, variables = self._convert_rest_to_graphql(method, endpoint, **kwargs)
+            return self.execute_query(query, variables)
+        except Exception as e:
+            raise handle_linear_error(e)

@@ -14,7 +14,7 @@ class LinearWebhook(BaseWebhook):
         self.settings = get_settings()
 
         # Set webhook secret from argument or fall back to settings
-        secret = webhook_secret if webhook_secret else self.settings.linear_webhook_secret
+        secret = webhook_secret if webhook_secret else self.settings.LINEAR_WEBHOOK_SECRET
         if secret:
             self.set_secret_key(secret)
 
