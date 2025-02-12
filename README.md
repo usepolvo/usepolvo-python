@@ -1,6 +1,6 @@
 # polvo-python
 
-Version: 0.2.4
+Version: 0.2.5
 
 Unlock the power of seamless integrations with our all-in-one integration package. Enjoy advanced features including asynchronous support, intelligent rate limiting, efficient caching, robust logging, secure storage, and so much more.
 
