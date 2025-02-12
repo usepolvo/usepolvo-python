@@ -1,4 +1,4 @@
-# usepolvo-python
+# polvo-python
 
 Version: 0.2.4
 
@@ -9,7 +9,7 @@ Unlock the power of seamless integrations with our all-in-one integration packag
 Our project follows an octopus-themed structure to keep things organized and fun:
 
 ```
-usepolvo-python/
+polvo-python/
 ├── src/
 │   └── usepolvo/
 │       ├── tentacles/                  # Integrations
